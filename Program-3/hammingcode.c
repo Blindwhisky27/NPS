@@ -1,122 +1,34 @@
 #include <stdio.h>
 int main()
 {
-    int a[4], b[4], r[3], s[3], i, q[3], c[7];
-    printf("\nenter 4 bit data word:\n");
-    for (i = 3; i >= 0; i--)
+    int sd[4], rd[4], sp[3], rp[3], r[7];
+
+    printf("Enter 4 bit data word:\n");
+    for (int i = 3; i >= 0; i--)
+        scanf("%d", &sd[i]);
+    // d7 d6 d5 p4 d3 p2 p1
+    // p1=d3 d5 d7
+    // p2=d3 d6 d7
+    // p3=d5 d6 d7;
+    sp[0] = (sd[0] + sd[1] + sd[3]) % 2;
+    sp[1] = (sd[0] + sd[2] + sd[3]) % 2;
+    sp[2] = (sd[1] + sd[2] + sd[3]) % 2;
+
+    printf("Hamming code: %d%d%d%d%d%d%d\n", sd[3], sd[2], sd[1], sp[2], sd[0], sp[1], sp[0]);
+
+    printf("Enter recived 7 bit data word:\n");
+    for (int i = 6; i >= 0; i--)
+        scanf("%d", &r[i]);
+    // d7 d6 d5 p4 d3 p2 p1
+    rp[0] = (r[0] + r[2] + r[4] + r[6]) % 2;
+    rp[1] = (r[1] + r[2] + r[5] + r[6]) % 2;
+    rp[2] = (r[3] + r[4] + r[5] + r[6]) % 2;
+
+    if (rp[0] == 0 && rp[1] == 0 && rp[2] == 0)
+        printf("Entered 4 bit data word is error free\n");
+    else
     {
-        scanf("%d", &a[i]);
+        int pos = (1 * rp[0]) + (2 * rp[1]) + (4 * rp[2]);
+        printf("Error is %dth bit\n", pos - 1);
     }
-    r[0] = (a[3] + a[1] + a[0]) % 2;
-    r[1] = (a[0] + a[2] + a[3]) % 2;
-    r[2] = (a[1] + a[2] + a[3]) % 2;
-    printf("\n\nthe 7bit hamming code word: \n");
-    for (i = 3; i >= 0; i--)
-    {
-        printf("%d\t", a[i]);
-    }
-    for (i = 2; i >= 0; i--)
-    {
-        printf("%d\t", r[i]);
-    }
-    printf("\n");
-    printf("\nenter the 7bit recieved codeword: ");
-    for (i = 7; i > 0; i--)
-        scanf("%d", &c[i]);
-    b[3] = c[7];
-    b[2] = c[6];
-    b[1] = c[5];
-    b[0] = c[4];
-    r[2] = c[3];
-    r[1] = c[2];
-    r[0] = c[1];
-    //calculating syndrome bits
-    s[0] = (b[0] + b[1] + b[3] + r[0]) % 2;
-    s[1] = (b[0] + b[2] + b[3] + r[1]) % 2;
-    s[2] = (b[1] + b[2] + b[3] + r[2]) % 2;
-    printf("\nsyndrome is: \n");
-    for (i = 2; i >= 0; i--)
-    {
-        printf("%d", s[i]);
-    }
-    if ((s[2] == 0) && (s[1] == 0) && (s[0] == 0))
-        printf("\n RECIEVED WORD IS ERROR FREE\n");
-    if ((s[2] == 1) && (s[1] == 1) && (s[0] == 1))
-    {
-        printf("\nError in received codeword, position- 7th bit from right\n");
-        if (c[7] == 0)
-            c[7] = 1;
-        else
-            c[7] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    if ((s[2] == 1) && (s[1] == 1) && (s[0] == 0))
-    {
-        printf("\nError in received codeword, Position- 6th bit from right\n");
-        if (c[6] == 0)
-            c[6] = 1;
-        else
-            c[6] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    if ((s[2] == 1) && (s[1] == 0) && (s[0] == 1))
-    {
-        printf("\nError in received codeword, Position- 5th bit from right\n");
-        if (c[5] == 0)
-            c[5] = 1;
-        else
-            c[5] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    if ((s[2] == 1) && (s[1] == 0) && (s[0] == 0))
-    {
-        printf("\nError in received codeword, Position- 4th bit from right\n");
-        if (c[4] == 0)
-            c[4] = 1;
-        else
-            c[4] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    if ((s[2] == 0) && (s[1] == 1) && (s[0] == 1))
-    {
-        printf("\nError in received codeword, Position- 3rd bit from right\n");
-        if (c[3] == 0)
-            c[3] = 1;
-        else
-            c[3] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    if ((s[2] == 0) && (s[1] == 1) && (s[0] == 0))
-    {
-        printf("\nError in received codeword, Position- 2nd bit from right\n");
-        if (c[2] == 0)
-            c[2] = 1;
-        else
-            c[2] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    if ((s[2] == 0) && (s[1] == 0) && (s[0] == 1))
-    {
-        printf("\nError in received codeword, Position- 1st bit from right\n");
-        if (c[1] == 0)
-            c[1] = 1;
-        else
-            c[1] = 0;
-        printf("\n Corrected codeword is\n");
-        for (i = 7; i > 0; i--)
-            printf("%d \t", c[i]);
-    }
-    return (1);
-} //End of Hamming code program*/
+}

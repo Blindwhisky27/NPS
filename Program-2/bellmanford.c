@@ -1,45 +1,63 @@
 #include <stdio.h>
+#include <stdlib.h>
 struct node
 {
-    unsigned dist[20];
-    unsigned from[20];
-} rt[10];
+    int dist[20];
+    int from[20];
+} rt[20];
 int main()
 {
-    int costmat[20][20];
-    int nodes, i, j, k, count = 0;
-    printf("\nEnter the number of nodes : ");
-    scanf("%d", &nodes); //Enter the nodes
-    printf("\nEnter the cost matrix :\n");
-    for (i = 0; i < nodes; i++)
+    int v, cost[25][25];
+    printf("Enter the number of vertices: ");
+    scanf("%d", &v);
+
+    printf("Enter the cost matrix: \n");
+    for (int i = 0; i < v; i++)
     {
-        for (j = 0; j < nodes; j++)
+        for (int j = 0; j < v; j++)
         {
-            scanf("%d", &costmat[i][j]);
-            costmat[i][i] = 0;
-            rt[i].dist[j] = costmat[i][j]; //initialise the distance equal to cost matrix
+            scanf("%d", &cost[i][j]);
+            cost[i][i] = 0;
+            rt[i].dist[j] = cost[i][j];
             rt[i].from[j] = j;
         }
     }
+
+    int count;
     do
     {
         count = 0;
-        for (i = 0; i < nodes; i++) //We choose arbitary vertex k and we calculate the direct
-                                    //   distance from the node i to k using the cost matrix
-            //and add the distance from k to node j
-            for (j = 0; j < nodes; j++)
-                for (k = 0; k < nodes; k++)
-                    if (rt[i].dist[j] > costmat[i][k] + rt[k].dist[j])
-                    { //We calculate the minimum distance
+        for (int i = 0; i < v; i++)
+        {
+            for (int j = 0; j < v; j++)
+            {
+                for (int k = 0; k < v; k++)
+                {
+                    if (rt[i].dist[j] > rt[i].dist[k] + rt[k].dist[j])
+                    {
                         rt[i].dist[j] = rt[i].dist[k] + rt[k].dist[j];
                         rt[i].from[j] = k;
                         count++;
                     }
+                }
+            }
+        }
     } while (count != 0);
-    for (i = 0; i < nodes; i++)
+    for (int i = 0; i < v; i++)
+    {
+        for (int j = 0; j < v; j++)
+        {
+            if (rt[i].dist[j] < 0)
+            {
+                printf("Negative cycles");
+                exit(0);
+            }
+        }
+    }
+    for (int i = 0; i < v; i++)
     {
         printf("\n\n For router %d\n", i + 1);
-        for (j = 0; j < nodes; j++)
+        for (int j = 0; j < v; j++)
         {
             printf("\t\nnode %d via %d Distance %d ", j + 1, rt[i].from[j] + 1, rt[i].dist[j]);
         }

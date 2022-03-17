@@ -1,32 +1,34 @@
 #include <stdio.h>
-unsigned fields[10];
-unsigned short checksum()
+
+unsigned int checksum()
 {
-    int i;
-    int sum = 0;
-    printf("Enter IP header information in 16 bit words\n");
-    for (i = 0; i < 9; i++)
+    int sum = 0, data;
+    printf("Enter values in 16 bits: \n");
+    for (int i = 0; i < 9; i++)
     {
-        printf("Field %d\n", i + 1);
-        scanf("%x", &fields[i]);
-        sum = sum + (unsigned short)fields[i];
+        printf("Field[%d]: ", i + 1);
+        scanf("%x", &data);
+        sum = sum + (unsigned int)data;
         while (sum >> 16)
-            sum = (sum & 0xFFFF) + (sum >> 16);
+            sum = (sum & 0xFFFF) + sum >> 16;
     }
     sum = ~sum;
-    return (unsigned short)sum;
+    return (unsigned int)sum;
 }
 int main()
 {
-    unsigned short result1, result2;
-    //Sender
+    int result1, result2;
+    printf("Enter senders data: ");
     result1 = checksum();
-    printf("\n COmputed Checksum at sender %x\n", result1);
-    //Receiver
+    printf("Checksum: %d\n", result1);
+
+    printf("Enter recviers data: ");
     result2 = checksum();
-    printf("\n COmputed Checksum at receiver %x\n", result2);
+    printf("Checksum: %d\n", result1);
+
     if (result1 == result2)
-        printf("No error");
+        printf("Checksum verified, data is same");
     else
-        printf("Error in data received");
+        printf("Checksum didn't verified, data is not same");
+    return 0;
 }
